@@ -2,10 +2,11 @@
 import { useContext } from 'react'
 import { DataContext } from 'store/GlobalState'
 import Link from 'next/link'
+import { addToCart } from 'store/Actions'
 
 function ProductItem({ product }) {
   const { state, dispatch } = useContext(DataContext)
-  const { auth } = state
+  const { auth, cart } = state
 
   const userLink = () => {
     return (
@@ -17,10 +18,10 @@ function ProductItem({ product }) {
         <button className="btn btn-success"
           style={{ marginLeft: '5px', flex: 1 }}
           disabled={product.inStock === 0 ? true : false}
-        // onClick={() => dispatch(addToCart(product, cart))} 
+          onClick={() => dispatch(addToCart(product, cart))}
         >
           Buy
-            </button>
+        </button>
       </>
     )
   }
@@ -44,7 +45,7 @@ function ProductItem({ product }) {
         // })} 
         >
           Delete
-            </button>
+        </button>
       </>
     )
   }
