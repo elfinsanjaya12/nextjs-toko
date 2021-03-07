@@ -10,7 +10,6 @@ function NavBar() {
   const { state, dispatch } = useContext(DataContext)
   const { auth, cart } = state
 
-
   const isActive = (r) => {
     if (r === router.pathname) {
       return " active"
