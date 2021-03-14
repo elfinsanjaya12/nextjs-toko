@@ -21,9 +21,11 @@ img{
 }
  
 
-
 /* ----------- Loading ------------- */
 @import url("./loading.css");
 
 /* ----------- Product ------------- */
 @import url("./product.css");
+
+/* ----------- Profile ------------- */
+@import url("./profile.css");

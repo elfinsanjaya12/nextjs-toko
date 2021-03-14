@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { useContext, useState, useEffect } from 'react'
 import { DataContext } from '../store/GlobalState'
 import CartItem from 'components/CartItem'
-import { getData } from 'utils/fetchData'
+import { getData, postData } from 'utils/fetchData'
 
 function Cart() {
   const { state, dispatch } = useContext(DataContext)
@@ -53,6 +53,46 @@ function Cart() {
     }
   }, [callback])
 
+  const handlePayment = async () => {
+    if (!address || !mobile)
+      return dispatch({ type: 'NOTIFY', payload: { error: 'Please add your address and mobile.' } })
+
+    let newCart = [];
+    for (const item of cart) {
+      const res = await getData(`product/${item._id}`)
+      if (res.product.inStock - item.quantity >= 0) {
+        newCart.push(item)
+      }
+    }
+
+    if (newCart.length < cart.length) {
+      setCallback(!callback)
+      return dispatch({
+        type: 'NOTIFY', payload: {
+          error: 'The product is out of stock or the quantity is insufficient.'
+        }
+      })
+    }
+
+    dispatch({ type: 'NOTIFY', payload: { loading: true } })
+
+    postData('order', { address, mobile, cart, total }, auth.token)
+      .then(res => {
+        if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err } })
+
+        dispatch({ type: 'ADD_CART', payload: [] })
+
+        // const newOrder = {
+        //   ...res.newOrder,
+        //   user: auth.user
+        // }
+        // dispatch({ type: 'ADD_ORDERS', payload: [...orders, newOrder] })
+        dispatch({ type: 'NOTIFY', payload: { success: res.msg } })
+        return router.push(`/order/${res.newOrder._id}`)
+      })
+
+  }
+
 
 
   if (cart.length === 0)
@@ -97,7 +137,7 @@ function Cart() {
 
 
         <Link href={auth.user ? '#!' : '/signin'}>
-          <a className="btn btn-dark my-2" onClick={null}>Proceed with payment</a>
+          <a className="btn btn-dark my-2" onClick={handlePayment}>Proceed with payment</a>
         </Link>
 
       </div>

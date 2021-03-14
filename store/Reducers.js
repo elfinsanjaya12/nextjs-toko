@@ -23,6 +23,16 @@ const reducers = (state, action) => {
         ...state,
         modal: action.payload
       };
+    case ACTIONS.ADD_ORDERS:
+      return {
+        ...state,
+        orders: action.payload
+      };
+    case ACTIONS.ADD_USERS:
+      return {
+        ...state,
+        users: action.payload
+      };
 
   }
 }

@@ -6,11 +6,11 @@ export const DataContext = createContext()
 
 export const DataProvider = ({ children }) => {
   const initialState = {
-    notify: {}, auth: {}, cart: [], modal: []
+    notify: {}, auth: {}, cart: [], modal: [], orders: [], users: [], categories: []
   }
 
   const [state, dispatch] = useReducer(reducers, initialState)
-  const { cart } = state
+  const { cart, auth } = state
 
   useEffect(() => {
     const firstLogin = localStorage.getItem("firstLogin");
@@ -38,6 +38,29 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('__next__cart', JSON.stringify(cart))
   }, [cart])
+
+  useEffect(() => {
+    if (auth.token) {
+      getData('order', auth.token)
+        .then(res => {
+          if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err } })
+
+          dispatch({ type: 'ADD_ORDERS', payload: res.orders })
+        })
+
+      if (auth.user.role === 'admin') {
+        getData('user', auth.token)
+          .then(res => {
+            if (res.err) return dispatch({ type: 'NOTIFY', payload: { error: res.err } })
+
+            dispatch({ type: 'ADD_USERS', payload: res.users })
+          })
+      }
+    } else {
+      dispatch({ type: 'ADD_ORDERS', payload: [] })
+      dispatch({ type: 'ADD_USERS', payload: [] })
+    }
+  }, [auth.token])
 
   return (
     <DataContext.Provider value={{ state, dispatch }}>
