@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import PaypalBtn from './paypalBtn'
+// import PaypalBtn from './paypalBtn'
 import { patchData } from '../utils/fetchData'
 import { updateItem } from '../store/Actions'
 
@@ -104,7 +104,7 @@ const OrderDetail = ({ orderDetail, state, dispatch }) => {
               !order.paid && auth.user.role !== 'admin' &&
               <div className="p-4">
                 <h2 className="mb-4 text-uppercase">Total: ${order.total}</h2>
-                <PaypalBtn order={order} />
+                {/* <PaypalBtn order={order} /> */}
               </div>
             }
 
